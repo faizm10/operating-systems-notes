@@ -582,18 +582,83 @@ Common system calls:
 - Uses `fork()` and `exec()` to run multiple programs at once.
 - Allows background processes, priority control, and shell interaction.
 
+--- 
+
+## **Linkers and Loaders**
+
+- **Compiler**: Turns source into object (.o) files.
+- **Linker**: Combines object files into an **executable**.
+- **Loader**: Loads executable into **memory** and prepares it for execution.
+- **Relocation**: Adjusts memory addresses during linking/loading.
+- **Dynamically Linked Libraries (DLLs)**: Linked at runtime, not baked into the executable (saves memory).
+- **File formats**:
+    - Linux/UNIX: **ELF**
+    - Windows: **PE**
+    - macOS: **Mach-O**
+
 ---
 
-## Summary of Key Terms
+## **Why Applications Are OS-Specific**
 
-| **Term** | **Definition** |
-| --- | --- |
-| **System Call** | Software interrupt requesting OS services |
-| **API** | Developer-friendly interface for OS services |
-| **System Call Interface** | Links user functions to system calls |
-| **Stack** | Memory structure for passing parameters |
-| **Daemon** | Background service process |
-| **Client/Server** | Model for communication between processes |
-| **Shared Memory** | Memory accessible by multiple processes |
-| **Message Passing** | Communication via structured messages |
-| **Protection** | Controls access to system resources |
+- **Compiled apps don’t run on other OSs** due to:
+    - Different system calls.
+    - Different binary formats and CPU instruction sets.
+- **Cross-platform solutions**:
+    1. **Interpreted languages** (Python, Ruby).
+    2. **Virtual machines** (Java).
+    3. **Porting** code to other OSs using standard APIs like POSIX.
+
+---
+
+## **OS Design and Implementation**
+
+- **Design goals**:
+    - User goals: easy, safe, reliable.
+    - System goals: efficient, flexible, maintainable.
+- **Mechanism vs Policy**:
+    - **Mechanism**: How to do something.
+    - **Policy**: What to do.
+    - Separating them = more flexibility (microkernels prefer this).
+- **Implementation**:
+    - Most OSs use **C/C++**, not assembly.
+    - Assembly is used only for **critical low-level parts**.
+    - Modular design helps with debugging and maintenance.
+
+---
+
+## **OS Structure**
+
+- **Monolithic**: Everything in one big kernel (fast, but complex).
+- **Layered**: Built in layers (bottom = hardware, top = UI).
+- **Microkernel**: Strips kernel to basics; rest runs in user space (more secure, but slower).
+- **Modules (LKMs)**: Dynamically loaded pieces of kernel code (used by Linux).
+- **Hybrid**: Mix of structures (e.g., Windows, macOS).
+    - macOS = Darwin kernel = Mach microkernel + BSD UNIX.
+    - Android = Linux kernel + custom libraries + ART VM.
+
+---
+
+## **Booting the OS**
+
+- **Booting** = starting the OS.
+- **Bootstrap program (bootloader)**: Loads the kernel (e.g., GRUB).
+- **BIOS vs UEFI**:
+    - UEFI is newer, faster, supports bigger drives.
+- Linux uses **initramfs** as a temp root file system during boot.
+- Final step: start system process like `systemd` (Linux) or `init` (Android).
+
+---
+
+## **Debugging**
+
+- **Debugging** = finding and fixing errors (bugs).
+- **Crash**: When kernel fails.
+- **Core dump**: Snapshot of memory during crash for analysis.
+- **Tools**:
+    - **Counters**: `top`, `vmstat`, `/proc` files.
+    - **Tracers**: `strace`, `gdb`, `perf`, `tcpdump`.
+- **BCC (BPF Compiler Collection)**:
+    - Used for **live system tracing** on Linux.
+    - Based on **eBPF**, a lightweight, safe, fast way to trace.
+    - Written in Python with embedded C.
+    - Example: `opensnoop -p 1225` traces open() calls by a specific process.

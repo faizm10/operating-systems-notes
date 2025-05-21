@@ -405,7 +405,8 @@ These services focus on managing resources and ensuring system reliability.
     - **Authorization**: Control over what each user or process can access.
     - **Security**: Protects the system from external threats or unauthorized access.
 
-![a view of operating system services](attachment:6c880b72-c6ee-4ef9-88e1-5857bdfac38f:image.png)
+![a view of operating system services](image.png)
+
 
 a view of operating system services
 
@@ -497,6 +498,8 @@ System calls go through a **system-call interface**, which:
 1. Passes the request from user mode to kernel mode.
 2. Uses a **system call number** to find the correct function in the system call table.
 3. Executes the function in kernel mode and returns results.
+
+![alt text](image-1.png)
 
 ---
 

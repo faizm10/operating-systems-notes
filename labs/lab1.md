@@ -1,7 +1,3 @@
-Absolutely, Faiz — here’s your cleaned-up and consistently formatted **Lab 1 Report** so far, written clearly in simple language, structured for submission, and ready to keep building on:
-
----
-
 # **CSI3131 Lab 1 Report: Observing Process Behaviour**
 
 **Name:** Faiz Mustansar
@@ -150,3 +146,70 @@ tar -xvf lab1.tar
 * **`mon.c`**: A C file you will later modify or complete. It should automatically launch both the target and monitor programs and handle stopping them.
 
 ---
+
+Perfect, Faiz! You successfully ran both `tstcalc` and `tstcp`, and collected their output logs.
+
+Here’s how Step 7 will look in your lab report:
+
+---
+
+## ✅ Step 7: Running the Programs and Analyzing Logs
+
+### 🔧 Commands Used:
+
+```bash
+./tstcalc
+cat calc.log
+./tstcp
+cat cp.log
+```
+
+### 📸 Screenshots:
+
+* `tstcalc` output:
+  ![alt text](image-7.png)
+  ![alt text](image-8.png)
+
+* `tstcp` output:
+  ![alt text](image-9.png)
+  ![alt text](image-10.png)
+
+---
+
+### 🧠 What I Observed:
+
+#### `calc.log` – CPU-bound Process (calcloop):
+
+* The process was mostly in **"Running"** state.
+* User time (`UsrTm`) increased steadily: 0 → 406.
+* System time (`SysTm`) stayed low or at 0.
+* This shows the process was using the CPU a lot (doing calculations) but not waiting for I/O.
+
+#### `cp.log` – I/O-bound Process (cploop):
+
+* The process was mostly **"Sleeping (memory)"**.
+* Both user time and system time increased very slowly.
+* This tells me the process spent a lot of time waiting (probably for I/O like file copying) and didn’t do much processing.
+
+Perfect — it looks like your program `mon.c` successfully launched `calcloop`, monitored it using `procmon`, and displayed the results over 20 seconds. Here's how we’ll document **Step 9** in your lab report:
+
+---
+
+## ✅ Step 9-11: Running `mon.c` to Launch and Monitor a Program Automatically
+
+### 🔧 Command Used:
+
+```bash
+./mon ./calcloop
+```
+
+### 📸 Screenshot:
+
+![mon calcloop](image-11.png)
+
+### 🧠 What I Observed:
+
+* The `mon` program started `calcloop` and launched `procmon` with the PID of the `calcloop` process.
+* `procmon` monitored the `/proc/[pid]/stat` file and printed the process state, system time (`SysTm`), and user time (`UsrTm`) every second.
+* The output showed `calcloop` moving between "Running" and "Sleeping(memory)" states. The user time gradually increased, showing that the process was using CPU time.
+* After 20 seconds, `procmon` stopped when it could no longer access `/proc/8340/stat`, confirming that `calcloop` was killed by the `mon` program.

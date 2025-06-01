@@ -1,5 +1,5 @@
 import java.awt.*;
-import java.util.concurrent.*;  // Needed for ExecutorService and Executors
+import java.util.concurrent.*;  // For ExecutorService and Executors
 
 public class MBCanvas extends Canvas {
     private MBGlobals mg;           // Holds global settings
@@ -12,18 +12,18 @@ public class MBCanvas extends Canvas {
 
     @Override
     public void paint(Graphics g) {
-        // 1) Clear the screen
+        // 1) Clear the canvas to white
         g.setColor(Color.white);
         g.fillRect(0, 0, mg.pixeldim, mg.pixeldim);
 
         // 2) Create a fixed-size thread pool (example: 20 threads)
         pool = Executors.newFixedThreadPool(20);
 
-        // 3) Divide the whole canvas into rectangles and queue each as a task
+        // 3) Divide the entire canvas into rectangles and submit each as a task
         Rectangle whole = new Rectangle(0, 0, mg.pixeldim, mg.pixeldim);
         findRectangles(whole);
 
-        // 4) Tell the pool no more tasks will be submitted, and let it finish
+        // 4) Tell the pool no more tasks will be added; let it finish the queued tasks
         pool.shutdown();
     }
 

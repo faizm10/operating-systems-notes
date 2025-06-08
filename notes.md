@@ -5,7 +5,7 @@
 3. [Chapter Three](#chapter-three-processes)
 4. [Chapter Four](#chapter-four-threads-and-concurrency)
 5. [Chapter Five](#chapter-five-cpu-scheduling)
-6. [Chapter Six](#)
+6. [Chapter Six](#chapter-six-synchronization-tools)
 
 # **Chapter One: Introduction to Operating Systems**
 
@@ -945,4 +945,4 @@ Common system calls:
 - **Earliest-Deadline-First (EDF)**: A real-time scheduling algorithm in which the scheduler dynamically assigns priorities according to completion deadlines. The earlier the deadline, the higher the priority   
 - **proportional share**: Proportional share schedulers operate by allocating 𝑇 shares among all applications assuring each gets a specific portion of CPU time.  
   
-
+# Chapter Six: Synchronization Tools

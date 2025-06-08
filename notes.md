@@ -662,3 +662,162 @@ Common system calls:
     - Based on **eBPF**, a lightweight, safe, fast way to trace.
     - Written in Python with embedded C.
     - Example: `opensnoop -p 1225` traces open() calls by a specific process.
+
+# Chapter Three: Processes
+
+- **Process** is a program that is loaded into memory and executing   
+- Computers can run multiple processes at once using multitasking  
+- **Text section**—the executable code  
+- **Data section**—global variables  
+- **Heap section**—memory that is dynamically allocated during program run time  
+- **Stack section**—temporary data storage when invoking functions (such as function parameters, return addresses, and local variables)  
+- A program is **passive** such as a file containing a list of instructions stored on disk (**executable file)** where as a process is an **active** entity  
+- Process state can be changed and it can be in one of the following states  
+  - **New.** The process is being created.  
+  - **Running.** Instructions are being executed.  
+  - **Waiting.** The process is waiting for some event to occur (such as an I/O completion or reception of a signal).  
+  - **Ready.** The process is waiting to be assigned to a processor.  
+  - **Terminated.** The process has finished execution.  
+- A **process control block (task control block)** contains the following:  
+  - **Process state.** The state may be new, ready, running, waiting, halted, and so on.  
+  - **Program counter.** The counter indicates the address of the next instruction to be executed for this process.  
+  - **CPU registers.** The registers vary in number and type, depending on the computer architecture. They include accumulators, index registers, stack pointers, and general-purpose registers, plus any condition-code information. Along with the program counter, this state information must be saved when an interrupt occurs, to allow the process to be continued correctly afterward when it is rescheduled to run.  
+  - **CPU-scheduling information.** This information includes a process priority, pointers to scheduling queues, and any other scheduling parameters. (Chapter CPU Scheduling describes process scheduling.)  
+  - **Memory-management information.** This information may include such items as the value of the base and limit registers and the page tables, or the segment tables, depending on the memory system used by the operating system (Chapter Main Memory).  
+  - **Accounting information.** This information includes the amount of CPU and real time used, time limits, account numbers, job or process numbers, and so on.  
+  - **I/O status information.** This information includes the list of I/O devices allocated to the process, a list of open files, and so on.  
+- A process usually has one **thread** but can have multiple (multi-threading)  
+- The number of processes in memory \= **degree of multiprogramming.**  
+- **Multiprogramming** keeps the CPU busy by having some process always running.  
+- **Context switch** happens when CPU switches from one process to another:  
+  - Saves current process state (registers, program counter, memory info) into PCB.  
+  - Loads new process state from its PCB.  
+  - Takes a few microseconds and is considered overhead.  
+- A process can create **child processes,** forming a **tree**  
+- Each process has unique **pID**  
+- Use *fork()* to create a child, returns 0 to child, child’s pID to parent  
+- Use *exec()* to load a new program in the child  
+- Use *wait()* in parent to pause until child finishes   
+- What best describes the return value from fork() to the parent process after the parent successfully creates a child process?  
+  - fork() returns a positive value to the parent process, representing the actual pid of the child process.  
+- **zombie**: A process that has terminated but whose parent has not yet called wait() to collect its state and accounting information.  
+- **orphan**: The child of a parent process that terminates in a system that does not require a terminating parent to cause its children to be terminated.  
+- A process is **independent** if it does not share data with other processes occuring in the system  
+- A process is **cooperating** if it can affect or be affected by other processes executing in the system  
+  - Requires **interprocess communication (IPC)** that will allow them to exchange the data  
+- There are **2** fundamental models of IPC:   
+  - **Shared memory**  
+    - A region of memory that is shared by the cooperating processes is established, processes can then exchange info by reading the writing to the shared region  
+    - One process creates a shared memory region where the other processes attach it to their memory space  
+    - They can read/write directly bypassing the OS and they must make sure that they don't write at the same time  
+    - ***producer***: A process role in which the process produces information that is consumed by a consumer process.  
+    - ***consumer***: A process role in which the process consumes information produced by a producer process.  
+    - ***unbounded buffer***: A buffer with no practical limit on its memory size.  
+    - ***bounded buffer***: A buffer with a fixed size.  
+  - **Message passing**  
+    - Communication takes place by means of messages exchanged between the cooperating processes  
+    - **Message passing** \= processes communicate by sending and receiving messages.  
+    - **Synchronous** \= both sender and receiver wait (block) until the message is delivered.  
+    - **Rendezvous** \= the point where both sender and receiver meet during blocking communication.
+
+![alt text](image-2.png)
+
+- The ***browser*** process is responsible for managing the user interface as well as disk and network I/O. A new browser process is created when Chrome is started. Only one browser process is created.  
+- ***Renderer*** processes contain logic for rendering web pages. Thus, they contain the logic for handling HTML, Javascript, images, and so forth. As a general rule, a new renderer process is created for each website opened in a new tab, and so several renderer processes may be active at the same time.  
+- A ***plug-in*** process is created for each type of plug-in or Chrome extension in use. Plug-in processes contain the code for the plug-in as well as additional code that enables the plug-in to communicate with associated renderer processes and the browser process.  
+- Client server communication can use   
+  - **Sockets** (low level)  
+    - A socket is a communication endpoint where each connection is unique: pair of sockets   
+    - Consists of **IP address** and **port number**  
+    - Connections must be unique  
+    - Java provides 3 different types of sockets:  
+      - **Connection Oriented (TCP)**   
+      - **Connectionless (UDP)**  
+    - **Port** is a number at the start of a message packet  
+    -   
+  - **Remote procedure calls (RPCs)** higher level
+
+# Chapter Four: Threads and Concurrency 
+
+![alt text](image-3.png)
+
+- A **thread** is a basic unit of CPU utilization; it consists of thread ID, PC, a register set and a stack. Threads can share code, data and OS resources   
+- A process can have one or more threads  
+- Benefits of multithreaded programming:  
+  - **Responsiveness**: app stays usable even during long tasks  
+  - **Resource Sharing**: threads in same process share memory and resources easily   
+  - **Economy**: creating threads uses less memory and time than creating new processes   
+  - **Scalability** : threads can run in parallel on multiple cores, improving performance   
+- **Multicore:** multiple processing cores within the same CPU Chip or within a single system  
+- **Concurrency:** supports more than one task by allowing all the tasks to make progress  
+- **Parallelism:** can perform more than one task simultaneously. There are two types of them  
+  - **Task parallelism**   
+    - Distributing data but not threads/tasks across multiple computing cores. Each thread is performing a unique operation and different threads may be operating on the same data or different data  
+  - **Data parallelism**  
+    - Focus on distributing subsets of the same data across multiple computing cores and performing the same operation on each core
+
+![alt text](image-4.png)
+
+- 5 challenges of multicore programming  
+  - **Identifying tasks** – figure out which parts of a program can be separated and run independently.  
+  - **Balancing tasks** – make sure tasks are equally useful and balanced in workload.  
+  - **Splitting data** – divide data properly so different threads can work on different parts.  
+  - **Data dependency** – make sure threads don’t mess each other up if they share data.  
+  - **Testing/debugging** – much harder with parallel programs due to many possible paths.  
+- **user thread**: A thread running in user mode.  
+- **kernel threads**: Threads running in kernel mode.  
+- Multithreading models:  
+  - **Many to one**  
+    - Many user threads → 1 kernel thread  
+    - Only ONE thread can run at a time  
+    - Blocking system calls stop all threads  
+    - Not suitable for multicore systems  
+    - Rarely used today  
+  - **One To One**  
+    - Each user thread → 1 kernel thread  
+    - Allows true parallelism on multicore systems  
+    - Can run another thread if one is blocked  
+    - Too many threads can cause system overhead  
+    - Used by linux and windows  
+  - **Many To Many**  
+    - Many user threads → some (or equal) kernel threads.  
+    - Allows parallelism and more flexibility.  
+    - Developers can create many threads.  
+    - Kernel chooses which ones to run.  
+    - **Hard to implement** so less common in practice  
+- **Two-Level Model**  
+  - A mix of many-to-many and one-to-one.  
+  - Some user threads are **bound** to kernel threads (like one-to-one).  
+  - Others share kernel threads (like many-to-many).  
+- **Thread library:** provides the programmer with an API for creating and managing threads. There are two ways of implementing it:  
+  - Provide a library in user space entirely with no kernel support. All code and data structure for the library exist in user space. Invoking a function in the library results in a local function call in user space and not a system call  
+  - Implement a kernel-level library supported directly by the operating system. . In this case, code and data structures for the library exist in kernel space. Invoking a function in the API for the library typically results in a system call to the kernel.  
+- Three main thread libraries today: POSIX Pthreads, Windows and Java  
+- **implicit threading**: A programming model that transfers the creation and management of threading from application developers to compilers and run-time libraries.  
+- **thread pool**: A number of threads created at process startup and placed in a pool, where they sit and wait for work.  
+- **fork-join**: A strategy for thread creation in which the main parent thread creates (forks) one or more child threads and then waits for the children to terminate and join with it.  
+- **parallel regions**: Blocks of code that may run in parallel.  
+- **dispatch queue**: An Apple OS feature for parallelizing code; blocks are placed in the queue by Grand Central Dispatcher (GCD) and removed to be run by an available thread.  
+- **main queue**: Apple OS per-process block queue.  
+- **user-interactive**: In the Grand Central Dispatch Apple OS scheduler, the scheduling class represents tasks that interact with the user.  
+- **user-initiated**: In the Grand Central Dispatch Apple OS scheduler, the scheduling class represents tasks that interact with the user but need longer processing times than user-interactive tasks.  
+- **utility**: In the Grand Central Dispatch Apple OS scheduler, the scheduling class represents tasks that require a longer time to complete but do not demand immediate results.  
+- **background**: Describes a process or thread that is not currently interactive (has no interactive input directed to it), such as one not currently being used by a user. In the Grand Central Dispatch Apple OS scheduler, the scheduling class represents tasks that are not time sensitive and are not visible to the user.  
+- **block**: A self-contained unit of work. The smallest physical storage device storage unit, typically 512B or 4KB. In the Grand Central Dispatch Apple OS scheduler, a language extension that allows designation of a section of code that can be submitted to dispatch queues.  
+- **iteration space**: In Intel threading building blocks, the range of elements that will be iterated.  
+- **fork():**   
+  - Can duplicated only the calling threads or  
+  - All threads  
+- **exec():**  
+  - Replaces the entire process, wiping out all threads  
+- A **signal** is used in UNIX systems to notify a process that a particular event has occurred. It may be received either synchronous or asynchronous depending on the source and the reason for the event being signaled  
+- A signal may be **handled** by one of the two possible handers:	  
+  - **A default signal handler**  
+    - Kernel runs when handling that signal. This action can be overridden by **user-defined signal handler** that is called to handle the signal  
+  - **A user-defined signal handler**  
+- Terminating a running application using a keystroke sequence causes an **asynchronous** exception  
+- **Thread cancellation** involves terminating a thread before it has completed. A thread that is to be cancelled is often referred to as the **target thread**. It may occur in two different scenarios:  
+  - **Asynchronous cancellation:** one thread immediately terminates the target thread  
+  - **Deferred cancellation:** the target thread periodically checks whether it should terminate, allowing it an opportunity to terminate itself in an orderly fashion  
+- Cancellation points are associated with **deferred** cancellation  
+- **Thread-Local Storage (TLS):** Allows each thread to maintain its own copy of data (e.g., unique IDs). 

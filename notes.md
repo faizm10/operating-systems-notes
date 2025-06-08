@@ -2,6 +2,9 @@
 
 1. [Chapter One](#chapter-one-introduction-to-operating-systems)
 2. [Chapter Two](#chapter-two-operating-system-structure)
+3. [Chapter Three](#chapter-three-processes)
+4. [Chapter Four](#chapter-four-threads-and-concurrency)
+5. [Chapter Five](#chapter-five-cpu-scheduling)
 
 # **Chapter One: Introduction to Operating Systems**
 
@@ -756,7 +759,7 @@ Common system calls:
   - **Data parallelism**  
     - Focus on distributing subsets of the same data across multiple computing cores and performing the same operation on each core
 
-![alt text](image-4.png)
+![][image1]
 
 - 5 challenges of multicore programming  
   - **Identifying tasks** – figure out which parts of a program can be separated and run independently.  
@@ -821,3 +824,5 @@ Common system calls:
   - **Deferred cancellation:** the target thread periodically checks whether it should terminate, allowing it an opportunity to terminate itself in an orderly fashion  
 - Cancellation points are associated with **deferred** cancellation  
 - **Thread-Local Storage (TLS):** Allows each thread to maintain its own copy of data (e.g., unique IDs). 
+
+# Chapter Five: CPU Scheduling

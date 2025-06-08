@@ -5,6 +5,7 @@
 3. [Chapter Three](#chapter-three-processes)
 4. [Chapter Four](#chapter-four-threads-and-concurrency)
 5. [Chapter Five](#chapter-five-cpu-scheduling)
+6. [Chapter Six](#)
 
 # **Chapter One: Introduction to Operating Systems**
 
@@ -826,3 +827,122 @@ Common system calls:
 - **Thread-Local Storage (TLS):** Allows each thread to maintain its own copy of data (e.g., unique IDs). 
 
 # Chapter Five: CPU Scheduling
+
+- **CPU** scheduling is a fundamental OS function that improves CPU utilization by switching processes  
+- In **single-core systems,** one process runs at a time whereas in **multicore systems.** Multiple processes can run concurrently on different cores  
+- CPU-I/O Burst Cycle processes alternate between:   
+  - CPU bursts (e.g., calculations)  → few long CPU bursts  
+  - I/O bursts (e.g., disk access)→ many short CPU bursts CPU-bound programs  
+- **nonpreemptive**: Under nonpreemptive scheduling, once a core has been allocated to a thread the thread keeps the core until it releases the core either by terminating or by switching to the waiting state.  
+- **cooperative**: A form of scheduling in which threads voluntarily move from the running state.  
+- **preemptive**: A form of scheduling in which processes or threads are involuntarily moved from the running state (by for example a timer signaling the kernel to allow the next thread to run).  
+- **Dispatcher** is a module that gives control of the CPU’s core to the process selected by the CPU scheduler. This function involves the following:	  
+  - Switching context from one process to another  
+  - Switching to user mode  
+  - Jumping to the pripoer location in the user program to resume that program  
+  - The time it takes for the dispatcher to stop one process and start another running is known as **dispatch latency**
+
+![alt text](image-4.png)
+
+![alt text](image-6.png)
+
+- Majority of the criteria for comparing CPU-scheulding algorithms are:  
+  - **CPU Utilization**  
+    - Goal: Keep CPU as busy as possible.  
+    - Ideal range: 40%–90%.  
+    - Measured using tools like `top` (Linux/macOS/UNIX).  
+- **Throughput**  
+  - Number of processes completed per unit of time.  
+  - Long processes → low throughput  
+  - Short processes → high throughput
+
+- **Turnaround Time**  
+  - Total time from process submission to completion.  
+  - Includes: waiting time \+ execution time \+ I/O time  
+- **Waiting Time**  
+  - Time spent **only** in the ready queue.  
+  - Affected directly by the scheduling algorithm.  
+- **Response Time**  
+  - Time from request submission to the **first response**.  
+  - Critical in interactive systems (e.g., desktop apps).  
+    Focuses on how quickly the system **starts** responding.  
+- CPU-scheduling algorithm is the **first-come, first-served (FCFS)** scheduling algorithm. With this scheme, the process requests the CPU.   
+  - it’s non preemptive.  
+  - Simple and easy to implement but it has poor average waiting time if long jobs arrive first, causes **convoy effect** (long processes delay short ones) and it is not ideal for interactive systems  
+- **shortest job first (SJF)**  
+  - Process with the shortest next CPU burst is chosen.   
+  - Type: Non-preemptive or Preemptive (**Shortest Remaining Time First or SRTF**)  
+  - Pros: Minimizes average waiting time (optimal).   
+  - Cons: Can't perfectly predict the next CPU burst. Requires estimation (usually via exponential averaging).  
+- **Round-robin scheduling**  
+  - Order: Like FCFS but with preemption using a time quantum.   
+  - Type: Preemptive.   
+  - Pros: Fair for all processes. Ideal for interactive systems.   
+  - Cons: Performance highly dependent on time quantum size.   
+    - Too small → too many context switches.   
+    - Too large → behaves like FCFS.  
+- **Priority-scheduling algorithm**  
+  - Order: CPU goes to the process with the highest priority.   
+  - Type: Can be preemptive or non-preemptive.   
+  - Special Case: SJF is a priority algorithm where priority \= 1/burst time.   
+  - Cons:   
+    - Can cause **starvation** (**indefinite blocking**).   
+    - Solution: **Aging** (increase priority over time).
+
+- **Multilevel queue**  
+  - Idea: Multiple ready queues (e.g., foreground, background) with different priorities.   
+  - Static: A process stays in its assigned queue.   
+  - Scheduling between queues:   
+    - Fixed priority  
+    - Time-sliced among queues
+
+![alt text](image-7.png)
+
+- **Multilevel feedback queue scheduling**  
+  - Most flexible algorithm.   
+  - Processes can move between queues based on behavior.   
+  - Key idea: Favor short (I/O-bound) jobs and demote long (CPU-bound) jobs.   
+  - Uses **aging** and **different time quantums** for each level.   
+  - Pros:   
+    - Dynamic, prevents starvation.   
+    - Adapts to varying job types.   
+- Cons: Most complex to implement and tune.  
+- There is one distinction between user level and kernel level threads in terms of how they are scheduled  
+  - User-level threads are scheduled by the thread library using **process-contention scope (PCS)**, meaning they compete for the CPU only with other threads within the same process. In contrast, kernel-level threads are scheduled by the operating system using **system-contention scope (SCS)**, meaning they compete for the CPU with all other threads across the entire system..   
+- **process-contention scope (PCS):** On systems implementing the many-to-one and many-to-many threading models, the thread library schedules user-level threads to run on an available LWP (and thus threads contend with others within the same process contend for CPU time).   
+- **system-contention scope (SCS):** A thread scheduling method in which kernel-level threads are scheduled onto a CPU, regardless of which process they are associated with (and thus contending with all other threads on the system for CPU time).  
+- If multiple CPUs are available, **load sharing,** where multiple threads may run in parallel. Becomes possible, however scheduling issues become correspondingly more complex  
+- **Multiprocessor** referred to systems that provided multiple physical processors where each processors contained one single-core CPU   
+- **asymmetric multiprocessing** is simple because only one core accesses the system data structures, reducing the need for data sharing  
+- **Symmetric Multiprocessing (SMP)** – All processors are self-scheduling. Most modern OSes use this.  
+- Queue Organization:   
+  - **Shared Queue** – All processors pick from one queue (can cause bottlenecks).  
+  - **Private Queues** – Each processor has its own queue (more efficient, avoids race conditions).  
+- Two ways to multithread a processing core:  
+  - **Coarse-grained:** only switches thread on long stalls  
+  - **Fine-grained:** switches thread every cycle (more responsive)   
+- Only one thread may run in parallel on a single processing core with 2 hardware threads  
+- **Load balancing:** attempts to keep the workload evenly distributed across all processors in an SMPT system. There are two approaches to load balancing  
+  - **Push migration:** a specific task periodically checks the load on each processor and if it finds the imbalance,  it will evenly distributes the load by pushing threads from overloaded to less busy processors  
+  - **Pull migration:** occurs when an idle processor pulls a waiting task from processor  
+  - Push and pull migration need not be mutually exclusive and often implemented in parallel on load-balancing systems  
+- **processor affinity**: A kernel scheduling method in which a process has an affinity for the processor in which it is currently running (to keep the cache warm for example).   
+- **soft affinity**: When an operating system has a policy of attempting to keep a process running on the same processor—but not guaranteeing that it will do so. hard affinity: When an operating system supports or allows a process's threads to run on the same processor at all times (as opposed to being moved to various processors as the thread is scheduled onto CPU).  
+- **soft real-time systems**: Soft real-time systems provide no guarantee as to when a critical real-time thread will be scheduled \- they guarantee only that the thread will be given preference over noncritical threads  
+- **hard real-time systems**: Hard real-time systems have strict scheduling facilities \- a thread must be serviced by its deadline and service after the deadline has expired is the same as no service at all.  
+- **event latency**: The amount of time that elapses from when an event occurs to when it is serviced.  
+- There are two types of latencies that affects the performance of real-time systems:  
+  - **Interrupt latency**: The period of time from the arrival of an interrupt at the CPU to the start of the routine that services the interrupt.
+
+![alt text](image-8.png)
+
+- **dispatch latency**: The amount of time the dispatcher takes to stop one thread and put another thread onto the CPU.  
+- **conflict phase**: During scheduling, the time the dispatcher spends moving a thread off of a CPU and releasing resources held but lower-priority threads that are needed by the higher-priority thread that is about to be put onto CPU.  
+- **periodic**: A type of real-time process that repeatedly moves between two modes at fixed intervals- needing CPU time and not needing CPU time.  
+- **rate**: A periodic real-time process has a scheduling rate of 1 / p (where p is the length of its running period).  
+- **admission-control**: In real-time scheduling, the scheduler may not allow a process to start if its scheduling request is impossible \- if it cannot guarantee that the task will be serviced by its deadline.  
+- **rate-monotonic**: The rate-monotonic scheduling algorithm schedules periodic tasks using a static priority policy with preemption. CPU utilization is bounded when using this algoirthim   
+- **Earliest-Deadline-First (EDF)**: A real-time scheduling algorithm in which the scheduler dynamically assigns priorities according to completion deadlines. The earlier the deadline, the higher the priority   
+- **proportional share**: Proportional share schedulers operate by allocating 𝑇 shares among all applications assuring each gets a specific portion of CPU time.  
+  
+

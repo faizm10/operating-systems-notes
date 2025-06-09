@@ -6,6 +6,7 @@
 4. [Chapter Four](#chapter-four-threads-and-concurrency)
 5. [Chapter Five](#chapter-five-cpu-scheduling)
 6. [Chapter Six](#chapter-six-synchronization-tools)
+6. [Chapter Seven](#chapter-six-synchronization-examples)
 
 # **Chapter One: Introduction to Operating Systems**
 
@@ -946,3 +947,201 @@ Common system calls:
 - **proportional share**: Proportional share schedulers operate by allocating 𝑇 shares among all applications assuring each gets a specific portion of CPU time.  
   
 # Chapter Six: Synchronization Tools
+
+- Operating systems often run many threads at once, either concurrently or in parallel  
+  - These threads sometimes share the same data
+
+- If shared data is accessed without control, it can cause incorrect results  
+  - This issue is called a race condition  
+    - Happens when two or more threads try to update the same variable at the same time  
+    - The final result depends on the order in which instructions are run
+
+- Example using a shared variable `count` in producer-consumer problem  
+  - Producer does `count++` to add to the buffer  
+    - Translated to: read `count`, add 1, write back
+  - Consumer does `count--` to remove from the buffer  
+    - Translated to: read `count`, subtract 1, write back
+  - If both happen at the same time, their steps can overlap and overwrite each other  
+    - This can lead to wrong values like 4 or 6 instead of the correct 5
+
+- This shows why process synchronization is needed  
+  - Ensures only one thread can access or update shared data at a time  
+  - Prevents unexpected results caused by overlapping operations
+
+
+- A **cooperating process** is one that can affect or be affected by other processes executing in the system. 
+- a **race condiction** can occur when several threads try to access and modify the same data concurrently
+- **coordination**: Ordering of the access to data by multiple threads or processes.
+  - They may share the same code and data space, or communicate via shared memory or message passing
+
+- **Critical-section problem** arises when multiple processes share and update the same data
+  - Each process has a part of its code (**critical section**) that accesses shared data
+  - Only one process can be in its critical section at a time
+  - The section of code implementing this request is the **entry section** and the critial section can be followed by an **exit section**. The remaining code is the **remainder section**
+
+![alt text](image-9.png)
+
+- To manage access, code is divided into:
+  - Entry section: asks for permission to enter the critical section
+  - Critical section: modifies shared data
+  - Exit section: releases control
+  - Remainder section: rest of the code
+
+- A correct solution to the problem must satisfy three conditions:
+  - **Mutual exclusion**: only one process in the critical section at any time
+  - **Progress**: if no one is in the critical section, the decision of who enters next cannot be delayed unnecessarily
+  - **Bounded waiting**: a process won't wait forever to enter its critical section
+
+- Example of race condition in kernel: managing a list of open files
+  - If two processes open files at the same time, they may corrupt the list if not synchronized
+
+![alt text](image-10.png)
+
+- Another example: assigning process IDs using fork()
+  - Two processes can end up getting the same ID if updates to `next_available_pid` are not protected
+
+- Disabling interrupts can solve race conditions in single-core systems
+  - Prevents context switching while modifying shared data
+  - Not ideal for multiprocessor systems
+    - Takes longer to broadcast interrupt disable signal
+    - Can harm system performance
+
+- Two types of kernel handling:
+  - **Preemptive kernel**
+    - Can switch out a process in kernel mode
+    - More responsive
+    - Better for real-time tasks
+    - Needs careful design to avoid race conditions
+  - **Nonpreemptive kernel**
+    - Once in kernel mode, process cannot be interrupted
+    - Naturally avoids race conditions
+    - Might be less responsive if kernel code takes long to finish
+    - kernel is free from race conditions
+
+- **Peterson’s solution **is a software method for handling critical sections between two processes
+- Uses **two** shared variables:
+  - `flag[2]`: shows if a process wants to enter
+  - `turn`: decides whose turn it is to enter
+- Each process:
+  - Sets its flag to true, sets turn to the other
+  - Waits if the other wants to enter and it's their turn
+  - Enters critical section once safe, then resets its flag
+- Ensures:
+  - Mutual exclusion (only one enters at a time)
+  - Progress (one can enter if the other isn't interested)
+  - Bounded waiting (fair access)
+- Doesn't work reliably on modern CPUs due to instruction reordering
+  - Reordered reads/writes can break mutual exclusion
+
+![alt text](image-11.png)
+
+- **Software-based** solutions (e.g., Peterson’s) don’t always work on modern CPUs due to instruction reordering
+- Hardware offers support via:
+  - **Memory barriers** (aka memory fences)
+    - Prevent instruction reordering
+    - Ensure all previous memory operations are completed before continuing
+    - Used by kernel developers to avoid data inconsistencies
+    - falls into one of two categories:
+      1. **Strongly ordered**, where a memory modification on one processor is immediately visible to all other processors.
+      2. **Weakly ordered**, where modifications to memory on one processor may not be immediately visible to other processors.
+  - **Atomic instructions**:
+    - `test_and_set()`:
+      - Sets a lock and returns its old value
+      - Used to implement basic mutual exclusion
+    - `compare_and_swap()` (CAS):
+      - Swaps value only if expected value matches
+      - Used in mutual exclusion logic
+  - CAS-based algorithms:
+    - Simple version provides mutual exclusion but not bounded waiting
+    - Bounded waiting version uses a `waiting[]` array to ensure fair turn-taking
+- **Atomic variables**:
+  - Built using atomic instructions like CAS
+  - Used for safe updates (e.g., incrementing counters)
+  - Good for simple race conditions but not full synchronization problems
+
+![alt text](image-12.png)
+
+
+- **memory model**: Computer architecture memory guarantee, usually either strongly ordered or weakly ordered.
+
+- **memory barriers**: Computer instructions that force any changes in memory to be propagated to all other processors in the system.
+
+- **memory fences**: Computer instructions that force any changes in memory to be propagated to all other processors in the system.
+
+- **atomically**: A computer activity (such as a CPU instruction) that operates as one uninterruptable unit.
+
+- **atomic variable**: A programming language construct that provides atomic operations on basic data types such as integers and booleans.
+
+- **Mutex (mutual exclusion) locks** are high-level software tools to avoid race conditions
+  - A process must **acquire()** the lock before the critical section and **release()** it after
+  - Ensures only one thread enters the critical section at a time
+
+- Mutex lock uses a boolean `available` flag
+  - `acquire()` loops (busy wait) until lock is available, then sets it to false
+  - `release()` sets the lock to true again
+
+- Requires atomic operations to avoid race conditions during acquire/release
+  - Often implemented using `compare_and_swap` (CAS)
+
+- Issues with basic mutex:
+  - Causes **busy waiting** (CPU cycles wasted)
+  - Called a **spinlock (A locking mechanism that continuously uses the CPU while waiting for access to the lock.)** due to the constant checking loop
+  - Useful if the lock is held for a **short duration** (less than two context switches)
+  - Spinlocks are effective on **multi-core systems**, where one core can spin while another is in the critical section
+
+- Locks can be:
+  - **Contended**: when multiple threads try to acquire the lock (performance drops)
+  - **Uncontended**: when the lock is immediately available
+
+- **Semaphores** are integer variables used for synchronization, accessed only through two atomic operations:
+- `wait(S)`: blocks if `S <= 0`; otherwise, decrements `S`
+- `signal(S)`: increments `S`
+- **Binary semaphore**: value is 0 or 1 (like a mutex lock)
+- **Counting semaphore**: tracks multiple resource instances (value ≥ 0)
+- Binary semaphores ensure mutual exclusion (e.g., critical sections)
+- Counting semaphores control access to a limited number of resources
+- Instead of looping, processes waiting on a semaphore are **put to sleep**
+- `wait()` adds a process to a queue and suspends it
+- `signal()` wakes up a waiting process
+- `wait()` and `signal()` must be atomic to avoid race conditions
+- In uniprocessor systems, this can be done by disabling interrupts
+- In multiprocessors, techniques like `compare_and_swap` or spinlocks are used
+- To use a binary semaphore to solve the critical section problem, the semaphore must be initialized to 1 and `wait()` must be called before entering a critical section and `signal()` must be called after exiting the critical section.
+
+- High-level synchronization construct that ensures **mutual exclusion** automatically
+- Only **one process** can be active in a monitor at a time
+- Errors like race conditions can still happen if:
+  - `wait()`/`signal()` are misused
+  - Programmers ignore access rules
+
+- **Monitor** = abstract data type (ADT)
+  - represents programmer-defined data and a set of functions that provide mutual exclusion
+  - Combines shared variables and functions to manipulate them
+  - Functions are mutually exclusive by design
+- Uses **condition variables** with:
+  - `wait()` → process suspends until signaled
+  - `signal()` → resumes one waiting process
+- If `signal()` is called when no process is waiting → no effect
+- Monitor implementations:
+  - Often built using semaphores under the hood
+  - Additional semaphores (`mutex`, `next`, etc.) help manage internal logic
+- Supports **conditional wait** with priority numbers:
+  - Resumes process with smallest priority number
+- Limitations:
+  - Can’t fully prevent misuse (e.g., a process accessing resource without monitor)
+  - Still requires programmer discipline
+  - Not ideal for large or dynamic systems without extra access control
+
+- **Liveness** ensures that processes make progress in their execution
+- **Liveness failure** occurs when processes wait indefinitely, harming performance
+- **Deadlock**:
+  - Happens when two or more processes wait on each other’s resources
+  - No process can proceed because the required signal never occurs
+- **Priority inversion**:
+  - A high-priority process is blocked by a lower-priority one holding a needed resource
+  - Becomes worse if the low-priority process gets preempted by a medium-priority process
+  - Solved using **priority inheritance**, where the lower-priority process temporarily gets higher priority to finish and release the resource
+- **priority-inheritance protocol:** A protocol for solving priority inversion in which all processes that are accessing resources needed by a higher-priority process inherit that higher priority until they are finished with the resources in question.
+- **lock-free:** An algorithmic strategy that provides protection from race conditions without requiring the overhead of locking.
+
+# Chapter Seven: Synchronization Examples

@@ -1199,3 +1199,69 @@ Common system calls:
     - If `preempt_count > 0`, kernel preemption is not allowed.
   - **Nonrecursive locks**: A thread must release a lock before reacquiring it.
   - Use semaphores or mutexes for long-duration locking.
+
+- POSIX API provides user-level thread synchronization (used in UNIX/Linux/macOS).
+- Tools: mutex locks, semaphores, condition variables (via Pthreads/POSIX SEM extension).
+
+- **Mutex Locks**
+  - Use `pthread_mutex_t`.
+  - Init: `pthread_mutex_init(&mutex, NULL)`.
+  - Lock: `pthread_mutex_lock(&mutex)`; unlock: `pthread_mutex_unlock(&mutex)`.
+  - Used to protect critical sections.
+
+- **POSIX Semaphores**
+  - Two types: **named** and **unnamed**.
+
+  - *Named Semaphores*
+    - Created with `sem_open("name", O_CREAT, 0666, initial_value)`.
+    - Shared across unrelated processes using name.
+    - Use `sem_wait(sem)` and `sem_post(sem)` for access control.
+
+  - *Unnamed Semaphores*
+    - Created with `sem_init(&sem, 0, initial_value)`.
+    - Shared only among threads in the same process (unless using shared memory).
+    - Same wait/post functions as named semaphores.
+
+- **Condition Variables**
+  - Used with mutexes to wait for conditions.
+  - Data types: `pthread_cond_t` and `pthread_mutex_t`.
+  - Wait: 
+    - Lock mutex
+    - Check condition in loop
+    - `pthread_cond_wait(&cond, &mutex)` (automatically unlocks mutex during wait)
+  - Signal: 
+    - `pthread_cond_signal(&cond)` (does not release mutex)
+    - Followed by `pthread_mutex_unlock(&mutex)`
+  - Helps avoid race conditions by waiting for specific changes in shared data.
+
+- Java provides built-in synchronization through monitors and additional mechanisms since Java 1.5
+- Every object has a lock and a wait set for managing thread access
+
+- `synchronized` keyword
+  - Used to define methods or blocks that require owning an object’s lock
+  - Threads wait in the **entry set** if the lock is unavailable
+  - Lock is released when the thread exits the method
+
+- `wait()` and `notify()`
+  - `wait()` releases the lock and moves the thread to the wait set
+  - `notify()` signals one waiting thread to recheck the condition and possibly proceed
+
+- ReentrantLock
+  - Allows explicit lock management with `lock()` and `unlock()`
+  - Use `try-finally` to ensure the lock is always released
+  - Supports fairness policy and multiple reentries by the same thread
+
+- Java Semaphores
+  - Created with `Semaphore(int value)`
+  - Use `acquire()` and `release()` for access control
+  - Often used for mutual exclusion or managing resource limits
+
+- Condition Variables
+  - Created from a ReentrantLock using `newCondition()`
+  - Support `await()` and `signal()` for precise thread coordination
+  - Allows multiple named conditions compared to the single implicit one with `wait()`/`notify()`
+
+- Example with turn-based access:
+  - Each thread has a dedicated condition variable
+  - Threads wait until their turn and then signal the next
+

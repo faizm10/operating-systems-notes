@@ -1269,3 +1269,35 @@ Common system calls:
   - Each thread has a dedicated condition variable
   - Threads wait until their turn and then signal the next
 
+- Multicore systems require better concurrency control
+  - Traditional tools: mutex locks, semaphores, monitors
+  - Problems: race conditions, deadlock, scalability
+
+- **Transactional Memory**
+  - Executes memory read/write as atomic transactions
+  - If transaction succeeds: commit changes
+  - If failure: abort and rollback
+  - Two types:
+    - **Software Transactional Memory (STM)**: uses instrumentation code
+    - **Hardware Transactional Memory (HTM)**: uses CPU cache for atomicity
+  - Benefits:
+    - No deadlocks
+    - Less developer overhead
+
+- **OpenMP**
+  - Simplifies parallel programming using compiler directives
+  - `#pragma omp parallel`: creates threads for parallel regions
+  - `#pragma omp critical`: defines critical sections to avoid race conditions
+  - Easier than mutexes, but still requires manual identification of shared data risks
+
+- Functional Programming Languages
+  - No mutable state → avoids race conditions and deadlocks
+  - Examples:
+    - Erlang: designed for concurrency
+    - Scala: combines functional + object-oriented paradigms
+
+- **imperative language**: Language for implementing algorithms that are state-based (e.g., C, C++, Java, and C#).
+
+- **procedural language**: A language that implements state-based algorithms (e.g., C, C++, Java, and C#).
+
+- **functional language:** A programming language that does not require states to be managed by programs written in that language (e.g., Erlang and Scala).

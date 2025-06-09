@@ -1132,6 +1132,7 @@ Common system calls:
   - Still requires programmer discipline
   - Not ideal for large or dynamic systems without extra access control
 
+
 - **Liveness** ensures that processes make progress in their execution
 - **Liveness failure** occurs when processes wait indefinitely, harming performance
 - **Deadlock**:

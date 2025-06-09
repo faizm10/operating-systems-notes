@@ -1145,3 +1145,54 @@ Common system calls:
 - **lock-free:** An algorithmic strategy that provides protection from race conditions without requiring the overhead of locking.
 
 # Chapter Seven: Synchronization Examples
+
+- These problems test synchronization tools like semaphores, mutexes, and monitors.
+- **Bounded-Buffer Problem**
+  - Shared buffer with `N` slots.
+  - Uses 3 semaphores: 
+    - `mutex` for mutual exclusion
+    - `empty` (initially N) for empty slots
+    - `full` (initially 0) for full slots
+  - Producer: `wait(empty)`, `wait(mutex)`, `add item`, `signal(mutex)`, `signal(full)`
+  - Consumer: `wait(full)`, `wait(mutex)`, `remove item`, `signal(mutex)`, `signal(empty)`
+
+- **Readers-Writers Problem**
+  - Multiple readers can access data simultaneously.
+  - Writers need exclusive access.
+  - Uses semaphores `rw_mutex`, `mutex`, and integer `read_count`.
+  - *First problem: no reader should wait unless a writer is writing.*
+  - Can lead to *starvation* (either readers or writers depending on variation).
+
+- **Dining-Philosophers Problem**
+  - Philosophers need 2 chopsticks (shared resources) to eat.
+  - Simple solution using semaphores may cause deadlock if all pick one chopstick.
+  - Remedies include:
+    - Allow max 4 philosophers at a time.
+    - Only pick up chopsticks if both are available.
+    - Odd philosophers pick up left first, even pick up right first.
+  - Monitor solution uses states (THINKING, HUNGRY, EATING) and condition variables.
+  - Prevents deadlock but may still allow starvation.
+- **dining-philosophers problem**: A classic synchronization problem in which multiple operators (philosophers) try to access multiple items (chopsticks) simultaneously.
+
+- **Windows Kernel**
+  - Uses spinlocks for global resources on multiprocessors (short duration).
+  - Window provides **dispatcher objects** (mutexes, semaphores, events, timers) used for thread sync outside the kernel.
+    - Objects can be in `signaled` (available) or `nonsignaled` (not available) state.
+    - Threads block if object is nonsignaled; moved to ready when signaled.
+
+![alt text](image-13.png)
+
+  - Critical-section objects are user-mode mutexes with low overhead.
+    - Uses spinlocks first; falls back to kernel mutex if contention is high.
+
+- **Linux Kernel**
+  - Fully preemptive (post v2.6).
+  - **Atomic integers** (e.g., `atomic_t`) allow lock-free operations for counters.
+  - **Mutex locks**: `mutex_lock()` and `mutex_unlock()` for critical sections.
+  - **Spinlocks**: used for short-duration locks on SMP systems.
+    - On single-core systems, kernel preemption is disabled/enabled instead.
+  - `preempt_disable()` and `preempt_enable()` manage preemption.
+    - Controlled by `preempt_count` counter in thread info.
+    - If `preempt_count > 0`, kernel preemption is not allowed.
+  - **Nonrecursive locks**: A thread must release a lock before reacquiring it.
+  - Use semaphores or mutexes for long-duration locking.

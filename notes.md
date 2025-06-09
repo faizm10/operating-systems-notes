@@ -1182,13 +1182,16 @@ Common system calls:
 
 ![alt text](image-13.png)
 
-  - Critical-section objects are user-mode mutexes with low overhead.
+  - **Critical-section objects** are user-mode mutexes with low overhead.
     - Uses spinlocks first; falls back to kernel mutex if contention is high.
 
 - **Linux Kernel**
   - Fully preemptive (post v2.6).
   - **Atomic integers** (e.g., `atomic_t`) allow lock-free operations for counters.
   - **Mutex locks**: `mutex_lock()` and `mutex_unlock()` for critical sections.
+
+![alt text](image-14.png)
+
   - **Spinlocks**: used for short-duration locks on SMP systems.
     - On single-core systems, kernel preemption is disabled/enabled instead.
   - `preempt_disable()` and `preempt_enable()` manage preemption.

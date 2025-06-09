@@ -1240,7 +1240,11 @@ Common system calls:
 - `synchronized` keyword
   - Used to define methods or blocks that require owning an object’s lock
   - Threads wait in the **entry set** if the lock is unavailable
+  ![alt text](image-15.png)
   - Lock is released when the thread exits the method
+  - in addition to having a lock, every object also has associated with it a **wait set** consisting of a set of threads
+
+    ![alt text](image-16.png)
 
 - `wait()` and `notify()`
   - `wait()` releases the lock and moves the thread to the wait set

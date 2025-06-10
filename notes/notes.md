@@ -1149,6 +1149,16 @@ Common system calls:
 - **priority-inheritance protocol:** A protocol for solving priority inversion in which all processes that are accessing resources needed by a higher-priority process inherit that higher priority until they are finished with the resources in question.
 - **lock-free:** An algorithmic strategy that provides protection from race conditions without requiring the overhead of locking.
 
+| Feature            | Mutex             | Spinlock                | Semaphore                    | Monitor                 |
+| ------------------ | ----------------- | ----------------------- | ---------------------------- | ----------------------- |
+| Type               | Lock              | Lock (busy wait)        | Counter                      | High-level ADT          |
+| Allows multiple?   | ❌ No              | ❌ No                    | ✅ Yes (counting)             | ❌ No (one at a time)    |
+| Blocks or spins?   | Blocks or spins   | Spins (always)          | Blocks                       | Blocks                  |
+| Prevents deadlock? | ❌ No (if misused) | ❌ No                    | ❌ No (if misused)            | ❌ No (if misused)       |
+| Code complexity    | Moderate          | Simple                  | Medium                       | Low                     |
+| Use case           | Critical sections | Short critical sections | Multiple identical resources | General data protection |
+
+
 # Chapter Seven: Synchronization Examples
 
 - These problems test synchronization tools like semaphores, mutexes, and monitors.

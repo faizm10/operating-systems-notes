@@ -980,13 +980,14 @@ Common system calls:
   - Only one process can be in its critical section at a time
   - The section of code implementing this request is the **entry section** and the critial section can be followed by an **exit section**. The remaining code is the **remainder section**
 
-![alt text](image-9.png)
+  ![alt text](image-9.png)
+- ![alt text](image-17.png)
 
 - To manage access, code is divided into:
-  - Entry section: asks for permission to enter the critical section
-  - Critical section: modifies shared data
-  - Exit section: releases control
-  - Remainder section: rest of the code
+  - **Entry section:** asks for permission to enter the critical section
+  - **Critical section**: modifies shared data
+  - **Exit section**: releases control
+  - **Remainder section**: rest of the code
 
 - A correct solution to the problem must satisfy three conditions:
   - **Mutual exclusion**: only one process in the critical section at any time
@@ -1019,7 +1020,8 @@ Common system calls:
     - Might be less responsive if kernel code takes long to finish
     - kernel is free from race conditions
 
-- **Peterson’s solution **is a software method for handling critical sections between two processes
+- **Peterson’s solution** is a software method for handling critical sections between two processes
+
 - Uses **two** shared variables:
   - `flag[2]`: shows if a process wants to enter
   - `turn`: decides whose turn it is to enter
@@ -1102,6 +1104,7 @@ Common system calls:
 - Binary semaphores ensure mutual exclusion (e.g., critical sections)
 - Counting semaphores control access to a limited number of resources
 - Instead of looping, processes waiting on a semaphore are **put to sleep**
+- semaphore uses **waiting queue** DSA
 - `wait()` adds a process to a queue and suspends it
 - `signal()` wakes up a waiting process
 - `wait()` and `signal()` must be atomic to avoid race conditions

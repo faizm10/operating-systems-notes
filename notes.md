@@ -928,7 +928,8 @@ Common system calls:
   - **Pull migration:** occurs when an idle processor pulls a waiting task from processor  
   - Push and pull migration need not be mutually exclusive and often implemented in parallel on load-balancing systems  
 - **processor affinity**: A kernel scheduling method in which a process has an affinity for the processor in which it is currently running (to keep the cache warm for example).   
-- **soft affinity**: When an operating system has a policy of attempting to keep a process running on the same processor—but not guaranteeing that it will do so. hard affinity: When an operating system supports or allows a process's threads to run on the same processor at all times (as opposed to being moved to various processors as the thread is scheduled onto CPU).  
+- **soft affinity**: When an operating system has a policy of attempting to keep a process running on the same processor—but not guaranteeing that it will do so. 
+- **hard affinity:** When an operating system supports or allows a process's threads to run on the same processor at all times (as opposed to being moved to various processors as the thread is scheduled onto CPU).  
 - **soft real-time systems**: Soft real-time systems provide no guarantee as to when a critical real-time thread will be scheduled \- they guarantee only that the thread will be given preference over noncritical threads  
 - **hard real-time systems**: Hard real-time systems have strict scheduling facilities \- a thread must be serviced by its deadline and service after the deadline has expired is the same as no service at all.  
 - **event latency**: The amount of time that elapses from when an event occurs to when it is serviced.  

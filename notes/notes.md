@@ -89,9 +89,9 @@
 - The OS may control software-level cache (like memory pages)  
   - Good cache design \= better performance.  
 - **Cache Coherency** ensures all copies of a value (in different caches) are up to date—important in multiprocessor systems.  
-- Two important design issues for cache memory are *size* and *replacement policy*  
+- Two important design issues for cache memory are **size** and **replacement policy**
 - **protection**: A category of system calls. Any mechanism for controlling the access of processes or users to the resources defined by a computer system.  
-- Most IS maintain a list of user names and associated **user identifiers (user IDs).** In Windows terms it’s called **security ID**  
+- Most OS maintain a list of user names and associated **user identifiers (user IDs).** In Windows terms it’s called **security ID**  
 - **Virtualization** is a technology that allows us to abstract the hardware of a single computer into several different execution environments  
 - A user of a **virtual machine** can switch among the various operating systems in the same way a user can switch among the various processes running concurrently in a single OS system,  
 - **Emulation:** involves simulating computer hardware in software  

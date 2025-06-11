@@ -217,8 +217,8 @@ Operating systems offer different ways for users to interact with them. There ar
 
 `printf()` → calls `write()` system call via the **C standard library (libc)**
 
+- An important factor in handling the systems calls in the **run-time environment (RTE)** -- the full suite of software needed to execute applications written in a given programming language, including its compilers or interpreters as welll as other software such as libraries and loaders
 - System calls go through a **system-call interface**, which:
-
 1. Passes the request from user mode to kernel mode.
 2. Uses a **system call number** to find the correct function in the system call table.
 3. Executes the function in kernel mode and returns results.
@@ -239,21 +239,15 @@ Operating systems offer different ways for users to interact with them. There ar
 | **Communications** | `send_message()`, `receive_message()`, `pipe()`, `mmap()` |
 | **Protection** | `get_permissions()`, `set_permissions()`, `allow_user()` |
 
----
-
-## Examples: Windows vs UNIX System Calls
-
 | **Action** | **Windows** | **UNIX/Linux** |
 | --- | --- | --- |
 | Create process | `CreateProcess()` | `fork()`, `exec()` |
 | Read file | `ReadFile()` | `read()` |
 | Set permissions | `SetFileSecurity()` | `chmod()` |
 
----
+- **Interprocess Communication (IPC)**
 
-## Interprocess Communication (IPC)
-
-**Two models:**
+- There 
 
 1. **Message Passing**
     - Processes exchange messages.

@@ -10,321 +10,97 @@
 
 # **Chapter One: Introduction to Operating Systems**
 
-## What is an Operating System?
-
-An **Operating System (OS)** is a program that serves as an intermediary between the user and the computer hardware.
-
-### Main Goals of an OS:
-
-- Execute user programs and assist with solving problems.
-- Provide a convenient and user-friendly environment.
-- Utilize hardware resources efficiently.
-- Ensure good performance and ease of use.
-
-### Key Definitions:
-
-- The **kernel** is the core component of the OS and is *“the one program always running.”*
-- Everything else is classified as:
-    - **System programs**: Included with the OS (e.g., file managers, compilers).
-    - **Application programs**: Used to perform specific user tasks (e.g., web browsers).
-
----
-
-## Components of a Computer System
-
-A modern computer system is divided into four components:
-
-1. **Hardware** – The physical components: CPU, memory, and I/O devices.
-2. **Operating System** – Manages hardware and coordinates resources.
-3. **Application Programs** – Software that solves user problems (e.g., spreadsheets, compilers).
-4. **Users** – End users, machines, or other systems.
-
----
-
-## System Initialization
-
-### Bootstrap Program:
-
-- Loaded during power-up or reboot.
-- Stored in **firmware** (e.g., ROM or EPROM).
-- Initializes hardware and loads the **OS kernel** into memory to start execution.
-
----
-
-## System Operation and Interrupts
-
-### CPU and I/O Interaction:
-
-- CPU and I/O devices share a **system bus** to access **shared memory**.
-- Each **device controller** manages a specific hardware device and contains a **local buffer**.
-- The CPU moves data between main memory and these buffers.
-
-### Interrupts:
-
-- Devices inform the CPU that an operation has completed via **interrupts**.
-- The **interrupt vector** maps to specific service routines.
-- A **trap** or **exception** is a software-generated interrupt (e.g., caused by a divide-by-zero error or a system call).
-- The operating system is **interrupt-driven**.
-
-### Types of Interrupts:
-
-- **Polling** – The CPU checks each device regularly (inefficient).
-- **Vectored** – The device sends a specific interrupt signal to the CPU (more efficient).
-
-### Dual-Mode Operation:
-
-- **User Mode**: Limited access; used for executing user applications.
-- **Kernel Mode**: Full access; used by the OS for critical operations.
-- Mode transitions protect system integrity and prevent user programs from interfering with the OS.
-- Switching from user to kernel mode occurs during a **system call** or **exception**, and returns to user mode once the task is handled.
-
----
-
-## Performance Optimization
-
-### Caching:
-
-- Frequently accessed data is copied to **faster memory** (cache) to improve performance.
-- Main memory (RAM) often serves as a cache for secondary storage (e.g., hard drives).
-
-### Device Drivers:
-
-- Each device controller uses a **device driver** to communicate with the OS.
-- Drivers provide a **uniform interface**, abstracting hardware-specific details.
-
----
-
-## System Architectures
-
-### Multiprocessor Systems:
-
-- Also called **parallel systems** or **tightly-coupled systems**.
-- Contain two or more CPUs working together.
-- Benefits include:
-    - Increased reliability (fault tolerance).
-    - Cost efficiency (economy of scale).
-    - Higher throughput and performance.
-
-### Types:
-
-- **Asymmetric Multiprocessing**: Each processor performs a specific task.
-- **Symmetric Multiprocessing**: All processors perform all tasks equally.
-
----
-
-## Clustered Systems
-
-Clustered systems consist of multiple computers connected together to function as a unified system.
-
-### Key Features:
-
-- Share storage through a **Storage Area Network (SAN)**.
-- Provide **high availability**, continuing operation even if one system fails.
-
-### Types of Clustering:
-
-- **Asymmetric Clustering**: One node is in standby mode, ready to take over on failure.
-- **Symmetric Clustering**: All nodes are active and monitor each other.
-
-### High-Performance Computing (HPC):
-
-- Used in scientific or complex tasks requiring high processing power.
-- Applications must be written to support **parallelization**.
-
-### Distributed Lock Manager (DLM):
-
-- Prevents conflicting operations by managing resource access across clustered systems.
-
----
-
-## Interrupt Handling Overview
-
-| Type | Description |
-| --- | --- |
-| Hardware | Triggered by physical devices (e.g., keyboard, disk I/O). |
-| Software | Triggered by exceptions or system calls during execution. |
-
-The system transitions from **user mode** to **kernel mode** to safely handle these interrupts and system requests
-
----
-
-## **Operating System Structure**
-
-- **Multiprogramming**: Keeps the CPU busy by having multiple jobs (programs) in memory. When one job needs to wait (like for input), the OS switches to another job.
-- **Timesharing (Multitasking)**: The OS quickly switches between jobs so users can interact with each one as if it's running alone.
-- Each user has at least one **process** in memory.
-- If memory is full, the OS swaps processes in and out (called **swapping**).
-- **Virtual memory** allows running programs that don’t fully fit in RAM by moving parts in and out of memory.
-
----
-
-## **Operating System Operations**
-
-- OS is **interrupt-driven**:
-    - **Hardware interrupts**: from devices like a keyboard or disk.
-    - **Software interrupts (traps)**: from errors or user requests.
-- **Dual-mode operation**:
-    - **User mode**: limited access (regular apps).
-    - **Kernel mode**: full access (OS-level).
-    - Mode bit helps the OS know which mode it's in.
-    - Some instructions are only allowed in kernel mode for safety.
-
----
-
-## **Timer**
-
-- Used to **prevent programs from running forever** (infinite loop).
-- The OS sets a countdown (timer), and when it reaches zero, an interrupt is triggered so the OS can take control again.
-
----
-
-## **Process Management**
-
-- A **process** is a program that's running.
-- A program (like a file) is inactive, but a process is active.
-- It needs resources: memory, CPU time, input/output, etc.
-- When a process ends, the OS takes back the resources.
-- **Single-threaded** process: one task at a time.
-- **Multi-threaded**: can do multiple things at once.
-- Multiple processes can run at the same time using **CPU scheduling**.
-
-### Key OS responsibilities:
-
-- Start and end processes.
-- Pause and continue processes.
-- Help processes **talk to each other** and avoid **conflicts** (deadlocks).
-
----
-
-## **Memory Management**
-
-- Programs and data must be in memory (RAM) to run.
-- The OS decides:
-    - What should be in memory.
-    - When to move things in or out.
-    - Who gets how much memory.
-- Goal: keep memory use efficient and responsive.
-
----
-
-## **Storage Management**
-
-- OS presents a logical view of storage as **files**.
-- Manages devices like hard drives and SSDs.
-- Files are usually in **directories** (folders).
-- Handles:
-    - Creating/deleting files.
-    - Reading/writing files.
-    - Controlling who can access what.
-    - Backups to keep files safe.
-
----
-
-## **Mass Storage Management**
-
-- For long-term storage (data that doesn’t fit in memory).
-- Uses **disks** for storing large amounts of data.
-- The OS handles:
-    - Managing free space.
-    - Deciding where to store files.
-    - **Scheduling** disk access to avoid delays.
-
----
-
-## **I/O Subsystem**
-
-- The OS hides hardware complexity from users.
-- Uses:
-    - **Buffering**: store data temporarily.
-    - **Caching**: save frequent data for faster access.
-    - **Spooling**: run input/output tasks in the background.
-- Uses **device drivers** to talk to hardware.
-
----
-
-## **Protection and Security**
-
-- **Protection**: Controls what each program/user can access.
-- **Security**: Defends the system against threats like viruses or hackers.
-- Each user has a unique ID. Files and processes are tagged with these IDs to control access.
-- **Groups** allow shared access rights.
-- **Privilege escalation** lets certain users do more (like an admin).
-
----
-
-## **Kernel Data Structures**
-
-The OS uses data structures to manage resources:
-
-- **Linked lists** (singly, doubly, circular)
-- **Binary trees** (regular and balanced for faster search)
-- **Hash tables** for fast lookups
-- **Bitmaps** to track which resources are in use
-
----
-
-## **Computing Environments**
-
-### 1. **Traditional**
-
-- Regular PCs or laptops.
-- Connected to networks like the Internet.
-- May include firewalls or portals for access.
-
-### 2. **Mobile**
-
-- Smartphones and tablets.
-- Added features like GPS, sensors, etc.
-- Run mobile OSes like iOS or Android.
-
-### 3. **Distributed**
-
-- A group of computers connected over a network.
-- Work together and look like a single system.
-- Communicate using **TCP/IP** (Internet protocol).
-
-### 4. **Client-Server**
-
-- Clients (like your browser) request services from servers.
-- Server types:
-    - **Compute server**: handles tasks like databases.
-    - **File server**: stores and shares files.
-
-### 5. **Peer-to-Peer (P2P)**
-
-- No fixed server or client.
-- All nodes (devices) are equal.
-- Examples: Skype, file-sharing apps like BitTorrent.
-
-### 6. **Virtualization**
-
-- Run multiple OSes on one computer.
-- Example: Running Windows inside macOS.
-- Uses **Virtual Machine Managers (VMM)** like VirtualBox or VMware.
-
-### 7. **Cloud Computing**
-
-- Offers services over the Internet:
-    - **SaaS** (Software): Google Docs.
-    - **PaaS** (Platform): Firebase.
-    - **IaaS** (Infrastructure): AWS storage.
-- Can be **public**, **private**, or **hybrid** clouds.
-- Needs extra security (like firewalls) and tools (like load balancers).
-
-### 8. **Real-Time Embedded Systems**
-
-- Computers built into devices (cars, microwaves, etc.).
-- Some run real-time operating systems (RTOS) where tasks must finish on time.
-- Example: An airbag must trigger exactly when needed.
-
----
-
-## **Open-Source Operating Systems**
-
-- Anyone can see and change the code.
-- Encourages freedom and learning.
-- Examples: Linux, BSD (base of macOS).
-- Tools like VirtualBox let you run these OSes for testing and exploration.
+1. # Introduction
+
+- An **operating system**   
+  - is a software that manages a computer’s hardware  
+  - Provides basis for application programs and acts an an intermediary between the computer user and the computer hardware  
+  - We can view this as **resource allocator**   
+- Computer system can be divided into 4 components:  
+  - **Hardware**  
+    - CPU, Memory, I/O Devices  
+  - **OS**  
+  - **Application Programs**  
+    - Word processors, spreadsheets, compilers, web browsers   
+  - **User**  
+    - User’s view of the computer varies according to the interface being used  
+    - Goal is to maximize the work/play the user is performing  
+    - Thats where OS comes into place, it is designed for **ease of use** as well as **resource utilization**  
+- **Kernel:** one program running at all times on the computer  
+- **Middleware:** set of software frameworks that provide additional services to application developers  
+- A general purpose computer has one or more CPUs and several **device controllers** (like for USBs, audio, or display). These controllers connect to the **system bus** which allows them to communicate with each other and access **shared memory**  
+- Each device controller manages specific hardware and may handle multiple devices. It also has its own **small storage (buffer)** and **registers**, and its job is to move data between the connected device and its local
+
+![alt text](image-19.png)
+
+- **Interrupt:** a hardware mechanism that enables a device to notify the CPU that it needs attention  
+- When the CPU gets an interrupt, it **pauses** what its doing and runs the **interrupt handler** to deal with it  
+- After that, it resumes where it left off  
+- **Interrupt vector:** a table that stores addresses of interrupt handlers  
+- **Non-maskable interrupt:** can never be ignored  
+- **Maskable interrupt:** can be ignored for a short time if needed  
+- **Interrupt request line:** CPU checks for interrupts after each instructions using a special wire  
+- Process goes something like **Device signals → CPU catches it → handler fixes it → CPU goes back to work.**  
+- **RAM:** known as *main memory*; run most of the programs from unwriteable memory. it is **volatile** since it loses its content when the power is off  
+- Main memory is implemented in a semiconductor technology called **DRAM**  
+- **Bootstrap program:** loads the OS at the beginning  
+- **Firmware**; storage that is infrequently written to and is *nonvolatile*   
+- Most computer systems provide **secondary storage** as extension of main memory.   
+- Most common *secondary-storage devices* are **Hard-Disk Drives** and **nonvolatile memory devices** which provide storage for both programs and data.  
+- For big data tasks, interrupting the CPU every second can be too slow and annoying and a simple solution to this is **DMA (Direct Memory Access).** it lets devices move big chunks of data *directly* into memory without bother the CPU  
+  - It sets up buffers, pointers, and counters so it can transfer an entire block of data directly to or from the device and main memory. Only one interrupt per block which informs the device driver that the operation has been completed, rather than interrupt/byte  
+- **Core** is the component that executes instructions and contains registers for storing data locally  
+- **Multiprocessor systems** have two or more processors where each processor has a single core CPU. processors share computer bus, sometimes the clock, memory and peripheral devices.  
+- Most common multiprocessor systems use **symmetric multiprocessing** which two or more CPUs are working together, sharing memory and devices   
+  - Increases sizes  
+  - Each cpu has its own registers and speed cache but they share memory
+
+![alt text](image-20.png)
+
+- **Multicore:** including multiple computing cores on the same CPU  
+- **Multiprocessor:** including multiple processors  
+- **Cluttered system** connects multiple separate computers to work together. Each node is usually a **multicore system.** They also share storage  
+  - If one node fails, another can takeover  
+  - Cluster software monitors nodes and recovers tasks from failed nodes  
+- **Trap/Exception** is a software version of an interrupt  
+- **System call** is a program asking for OS for help  
+- **Multiprogramming**: Keeping many programs in memory and switching between them so the CPU is always doing something.  
+  - A **process** is a program that is currently running.  
+- **Multitasking**: Like multiprogramming, but faster. It switches between programs so quickly it feels like they run at the same time.  
+- Two modes of operation:   
+  - **User mode**  
+    - Whenever *trap* or *interrupt* occurs, the hardware switches to kernel mode, deals with the *trap/interrupt,* then goes back to user mode  
+  - **Kernel** **mode** aka **supervisor** **mode**, **system mode**, **privileged mode**  
+    - Only **privileged instructions** can be executed here. If user mode ran it, it would return illegal and traps it to the OS  
+    - System loads in kernel mode which will start user application in user mode  
+- **Timer**: Used to **prevent programs from running forever** (infinite loop).  
+- The OS sets a countdown (timer), and when it reaches zero, an **interrupt** is triggered so the OS can take control again.  
+- A **program** is just a file (passive); a **process** is that program in action (active).  
+- Processes need resources: **CPU time**, **memory**, **files**, and **devices**.  
+- The OS:  
+  - Creates/deletes processes  
+  - Schedules them on the CPU  
+  - Handles **synchronization** and **communication** between them  
+- Processes can run **sequentially** (one step at a time) or **in parallel** (on multiple cores).  
+- **Cache** fast memory is used to speed up access to data which is copied from slow memory (like disk) to cache because it’s used often.  
+- The OS may control software-level cache (like memory pages)  
+  - Good cache design \= better performance.  
+- **Cache Coherency** ensures all copies of a value (in different caches) are up to date—important in multiprocessor systems.  
+- Two important design issues for cache memory are *size* and *replacement policy*  
+- **protection**: A category of system calls. Any mechanism for controlling the access of processes or users to the resources defined by a computer system.  
+- Most IS maintain a list of user names and associated **user identifiers (user IDs).** In Windows terms it’s called **security ID**  
+- **Virtualization** is a technology that allows us to abstract the hardware of a single computer into several different execution environments  
+- A user of a **virtual machine** can switch among the various operating systems in the same way a user can switch among the various processes running concurrently in a single OS system,  
+- **Emulation:** involves simulating computer hardware in software  
+- A **network** is a communication path between two or more systems  
+- **TCP/IP** is the most common network protocol and it provides the fundamental architecture of the Internet  
+- A **Local-Area Network (LAN)** connects computers within a room, a building or a campus  
+- A **Wide-Area Network (WAN)** usually links buildings, cities or countries  
+- A **Metropolitan-Area Network (MAN)** could link buildings within a city  
+- A **network OS** is an OS that provides features such as file sharing across the network, along with a communication scheme that allows different processors on different computers to exchange messages  
+- **Stack (LIFO)**  
+- **POP(Push)**  
+- **Queue (FIFO)**
 
 ---
 

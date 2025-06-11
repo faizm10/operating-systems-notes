@@ -295,7 +295,7 @@ Common system calls:
 - Easier to write, debug, and move to other devices.
 - Performance depends more on good design than low-level code.
 - **Monolithic**: Everything in one big kernel (fast, but complex).
-- **Layered**: Built in layers (bottom = hardware, top = UI).
+- **Layered**: Built in layers (bottom = hardware, top = UI). It is easier to debug and verify the system
 - **Microkernel**: Strips kernel to basics; rest runs in user space (more secure, but slower).
 - **Modules (LKMs)**: Dynamically loaded pieces of kernel code (used by Linux).
 - **Hybrid**: Mix of structures (e.g., Windows, macOS).
@@ -307,7 +307,6 @@ Common system calls:
     - UEFI is newer, faster, supports bigger drives.
 - Linux uses `initramfs` as a temp root file system during boot.
 - Final step: start system process like `systemd` (Linux) or `init` (Android).
-
 - **Debugging** = finding and fixing errors (bugs).
 - **Crash**: When kernel fails.
 - **Core dump**: Snapshot of memory during crash for analysis.

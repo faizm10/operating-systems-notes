@@ -323,10 +323,14 @@ Common system calls:
 
 - **Process** is a program that is loaded into memory and executing   
 - Computers can run multiple processes at once using multitasking  
+- The status of the current activity of a process is represented by the value of the **program counter** and the contents of the processor's registers.
 - **Text section**—the executable code  
 - **Data section**—global variables  
 - **Heap section**—memory that is dynamically allocated during program run time  
 - **Stack section**—temporary data storage when invoking functions (such as function parameters, return addresses, and local variables)  
+
+![alt text](image-22.png)
+
 - A program is **passive** such as a file containing a list of instructions stored on disk (**executable file)** where as a process is an **active** entity  
 - Process state can be changed and it can be in one of the following states  
   - **New.** The process is being created.  

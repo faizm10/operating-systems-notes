@@ -82,7 +82,10 @@
   - Schedules them on the CPU  
   - Handles **synchronization** and **communication** between them  
 - Processes can run **sequentially** (one step at a time) or **in parallel** (on multiple cores).  
-- **Cache** fast memory is used to speed up access to data which is copied from slow memory (like disk) to cache because it’s used often.  
+- **Cache** fast memory is used to speed up access to data which is copied from slow memory (like disk) to cache because it’s used often.
+  - caching is like having a small notepad to keep things you need often so you do not have to keep looking for them in a big book
+  - stored in main memory or storage devices but going to those places will take time so that is why the system keeps a copy of the most used data in a faster, smaller place called the **cache**
+  ![alt text](image-21.png)
 - The OS may control software-level cache (like memory pages)  
   - Good cache design \= better performance.  
 - **Cache Coherency** ensures all copies of a value (in different caches) are up to date—important in multiprocessor systems.  

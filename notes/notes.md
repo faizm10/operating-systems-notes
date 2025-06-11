@@ -247,54 +247,27 @@ Operating systems offer different ways for users to interact with them. There ar
 
 - **Interprocess Communication (IPC)**
 
-- There 
+- There are two common models of interprocess communication:
 
 1. **Message Passing**
     - Processes exchange messages.
     - Good for small data transfers.
     - Easier for distributed systems (e.g., over a network).
+    - can be **direct (process-to-process)** or **indirect(through a mailbox)**
 2. **Shared Memory**
     - Processes access the same memory area.
+    - allows maximum speed and convinience of communication since it can be done at memory transfer speeds when it takes place within a computer
     - Fastest method but needs synchronization (e.g., using locks).
 
 Common system calls:
 
 - `open_connection()`, `accept_connection()`
 - `shared_memory_create()`, `shared_memory_attach()`
-
----
-
-## Device and File Management
-
 - OS treats physical devices and files similarly.
 - Common calls: `read()`, `write()`, `open()`, `close()`
 - Devices might require exclusive access via `request_device()` and `release_device()`.
-
----
-
-## Debugging and Maintenance
-
 - System calls like `dump_memory()` and tools like `strace` help track system call usage.
 - Time profiling and logging help optimize performance.
-
----
-
-## Special Platforms
-
-**Arduino (Single-tasking):**
-
-- Uses a bootloader, no OS.
-- Only one program (sketch) runs at a time.
-
-**FreeBSD (Multitasking):**
-
-- Uses `fork()` and `exec()` to run multiple programs at once.
-- Allows background processes, priority control, and shell interaction.
-
---- 
-
-## **Linkers and Loaders**
-
 - **Compiler**: Turns source into object (.o) files.
 - **Linker**: Combines object files into an **executable**.
 - **Loader**: Loads executable into **memory** and prepares it for execution.
@@ -304,39 +277,23 @@ Common system calls:
     - Linux/UNIX: **ELF**
     - Windows: **PE**
     - macOS: **Mach-O**
+- Why applications are OS specific?: 
+  - **Compiled apps don’t run on other OSs** due to:
+      - Different system calls.
+      - Different binary formats and CPU instruction sets.
+  - **Cross-platform solutions**:
+      1. **Interpreted languages** (Python, Ruby).
+      2. **Virtual machines** (Java).
+      3. **Porting** code to other OSs using standard APIs like POSIX.
 
----
-
-## **Why Applications Are OS-Specific**
-
-- **Compiled apps don’t run on other OSs** due to:
-    - Different system calls.
-    - Different binary formats and CPU instruction sets.
-- **Cross-platform solutions**:
-    1. **Interpreted languages** (Python, Ruby).
-    2. **Virtual machines** (Java).
-    3. **Porting** code to other OSs using standard APIs like POSIX.
-
----
-
-## **OS Design and Implementation**
-
-- **Design goals**:
-    - User goals: easy, safe, reliable.
-    - System goals: efficient, flexible, maintainable.
-- **Mechanism vs Policy**:
-    - **Mechanism**: How to do something.
-    - **Policy**: What to do.
-    - Separating them = more flexibility (microkernels prefer this).
-- **Implementation**:
-    - Most OSs use **C/C++**, not assembly.
-    - Assembly is used only for **critical low-level parts**.
-    - Modular design helps with debugging and maintenance.
-
----
-
-## **OS Structure**
-
+- Apps rely on OS-specific APIs and features.
+- An app for Windows may not run on macOS without changes.
+- **Policy** = what to do (e.g. which task runs first)
+- **Mechanism** = how to do it (e.g. use a timer)
+- Keeping them separate makes the OS more flexible.
+- Most OS code is now in C/C++, not assembly.
+- Easier to write, debug, and move to other devices.
+- Performance depends more on good design than low-level code.
 - **Monolithic**: Everything in one big kernel (fast, but complex).
 - **Layered**: Built in layers (bottom = hardware, top = UI).
 - **Microkernel**: Strips kernel to basics; rest runs in user space (more secure, but slower).
@@ -344,21 +301,12 @@ Common system calls:
 - **Hybrid**: Mix of structures (e.g., Windows, macOS).
     - macOS = Darwin kernel = Mach microkernel + BSD UNIX.
     - Android = Linux kernel + custom libraries + ART VM.
-
----
-
-## **Booting the OS**
-
 - **Booting** = starting the OS.
 - **Bootstrap program (bootloader)**: Loads the kernel (e.g., GRUB).
 - **BIOS vs UEFI**:
     - UEFI is newer, faster, supports bigger drives.
-- Linux uses **initramfs** as a temp root file system during boot.
+- Linux uses `initramfs` as a temp root file system during boot.
 - Final step: start system process like `systemd` (Linux) or `init` (Android).
-
----
-
-## **Debugging**
 
 - **Debugging** = finding and fixing errors (bugs).
 - **Crash**: When kernel fails.
